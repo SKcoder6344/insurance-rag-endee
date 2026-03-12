@@ -1,0 +1,31 @@
+services:
+  endee:
+    image: endeeio/endee-server:latest
+    container_name: endee-server
+    ports:
+      - "8080:8080"
+    ulimits:
+      nofile: 100000
+    environment:
+      NDD_NUM_THREADS: 0
+      NDD_AUTH_TOKEN: ""
+    volumes:
+      - endee-data:/data
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: insurance-rag-api
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENDEE_HOST=http://endee:8080
+    depends_on:
+      - endee
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+volumes:
+  endee-data:
