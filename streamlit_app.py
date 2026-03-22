@@ -10,10 +10,12 @@ Each step is shown live with retrieved chunks and similarity scores.
 Final verdict is displayed with colour-coded badge.
 """
 import time
+import os
 import requests
 import streamlit as st
 
-API_URL = "http://localhost:8000"
+# Reads from env var on Streamlit Cloud, falls back to localhost for local dev
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(

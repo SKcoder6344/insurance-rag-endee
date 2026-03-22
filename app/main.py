@@ -9,7 +9,9 @@ Endpoints:
   DELETE /index         → clear and reset the Endee index
 """
 import time
+import os
 from pathlib import Path
+from contextlib import asynccontextmanager
 from loguru import logger
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,8 +31,22 @@ from app.endee_store import EndeeHybridStore
 # ── Rate limiter ──────────────────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address)
 
+# ── Auto-ingest on startup ────────────────────────────────────────────────────
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Auto-ingest policy data on startup — handles Render cold starts."""
+    logger.info("Startup: checking Endee index...")
+    try:
+        from scripts.ingest import run_ingest
+        run_ingest()
+        logger.success("Startup ingest complete")
+    except Exception as e:
+        logger.warning(f"Startup ingest failed (Endee may not be ready yet): {e}")
+    yield
+
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
+    lifespan=lifespan,
     title="PolicyGuard AI",
     description=(
         "**Agentic Insurance Claims Analyzer** powered by Endee Hybrid Search.\n\n"
@@ -48,7 +64,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8501"],  # Streamlit only — not *
+    allow_origins=["*"],   # open for deployment — Streamlit Cloud URL varies
     allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )

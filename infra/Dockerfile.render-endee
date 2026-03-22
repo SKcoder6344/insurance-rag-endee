@@ -1,0 +1,10 @@
+# Endee vector DB — deployed on Render using official Docker Hub image
+FROM endeeio/endee-server:latest
+
+EXPOSE 8080
+
+ENV NDD_NUM_THREADS=0
+ENV NDD_AUTH_TOKEN=""
+ENV NDD_DATA_DIR=/data
+
+CMD ["/usr/local/bin/ndd"]

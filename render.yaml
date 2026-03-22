@@ -1,0 +1,36 @@
+services:
+  # ── Endee Vector DB (Docker image from Docker Hub) ──────────────────────────
+  - type: web
+    name: policyguard-endee
+    runtime: docker
+    dockerfilePath: ./infra/Dockerfile.render-endee
+    plan: free
+    envVars:
+      - key: NDD_NUM_THREADS
+        value: "0"
+      - key: NDD_AUTH_TOKEN
+        value: ""
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────────────
+  - type: web
+    name: policyguard-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false          # you set this manually in Render dashboard
+      - key: ENDEE_URL
+        fromService:
+          type: web
+          name: policyguard-endee
+          property: hostport
+      - key: INDEX_NAME
+        value: insurance_policies_hybrid
+      - key: DENSE_MODEL
+        value: all-MiniLM-L6-v2
+      - key: DENSE_DIM
+        value: "384"
+      - key: TOP_K
+        value: "5"
