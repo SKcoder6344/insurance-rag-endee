@@ -131,8 +131,6 @@ This chunks `data/insurance_policies.txt` by section, generates hybrid embedding
 
 ### 4. Open the UI
 
-Visit **http://localhost:8501** and submit a claim.
-
 ### 5. Or use the API directly
 
 ```bash
