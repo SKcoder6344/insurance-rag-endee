@@ -17,13 +17,23 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Create __init__ files
+        run: |
+          touch app/__init__.py scripts/__init__.py tests/__init__.py
 
       - name: Run tests
         env:
-          OPENAI_API_KEY: "sk-test-key"
-          ENDEE_HOST: "http://localhost:8080"
-        run: |
-          pytest tests/ -v --tb=short
+          GROQ_API_KEY: dummy_key_for_ci
+          ENDEE_URL: http://localhost:8080
+        run: pytest tests/ -v --tb=short

@@ -1,34 +1,76 @@
+"""
+Pydantic schemas for request/response validation.
+Every API endpoint uses typed models — no raw dicts.
+"""
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Any, Dict
 
 
-class QueryRequest(BaseModel):
-    question: str = Field(..., min_length=3, example="What does my health insurance cover?")
-    top_k: int = Field(default=3, ge=1, le=10)
+# ── Inbound ──────────────────────────────────────────────────────────────────
+
+class ClaimRequest(BaseModel):
+    claim: str = Field(
+        ...,
+        min_length=5,
+        max_length=2000,
+        example="My father has diabetes and needs knee replacement surgery. Is it covered?",
+    )
 
 
-class SourceChunk(BaseModel):
+class SearchRequest(BaseModel):
+    query: str = Field(..., min_length=2, max_length=500)
+    top_k: int = Field(default=5, ge=1, le=20)
+    section: Optional[str] = Field(
+        default=None,
+        example="exclusions",
+        description="Filter by policy section: coverage, exclusions, waiting_period, claim_procedure, emergency",
+    )
+
+
+# ── Agent internals ───────────────────────────────────────────────────────────
+
+class RetrievedChunk(BaseModel):
     text: str
-    source: str
+    section: str
     similarity: float
+    chunk_id: str
 
 
-class QueryResponse(BaseModel):
-    question: str
-    answer: str
-    sources: List[SourceChunk]
+class AgentStep(BaseModel):
+    step: int
+    action: str
+    query: str
+    results: List[RetrievedChunk]
+
+
+# ── Outbound ─────────────────────────────────────────────────────────────────
+
+class ClaimVerdict(BaseModel):
+    verdict: str = Field(..., example="COVERED", description="COVERED | NOT_COVERED | PARTIAL")
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    summary: str
+    coverage_points: List[str] = []
+    exclusion_points: List[str] = []
+    waiting_period: str = "None"
+    claim_steps: List[str] = []
+    recommendation: str = ""
+    steps: List[AgentStep] = []
     latency_ms: Optional[float] = None
 
 
-class IndexRequest(BaseModel):
-    documents: List[str] = Field(
-        ...,
-        description="List of insurance policy text passages to index.",
-        example=["Health insurance covers hospitalization up to Rs.5 lakh per year."]
-    )
+class SearchResponse(BaseModel):
+    results: List[RetrievedChunk]
+    count: int
+    query: str
 
 
 class HealthResponse(BaseModel):
     status: str
-    version: str
-    vector_db: str
+    version: str = "2.0.0"
+    index: str
+    mode: str = "Hybrid Search (Dense + BM25)"
+
+
+class IngestResponse(BaseModel):
+    message: str
+    chunks_indexed: int

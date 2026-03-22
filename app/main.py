@@ -1,85 +1,142 @@
 """
-Insurance Policy Q&A RAG API
-Built on Endee Vector Database + OpenAI
+PolicyGuard AI — FastAPI application entry point.
+
+Endpoints:
+  GET  /health          → system health check
+  POST /analyze         → 3-step agentic claim analysis (main endpoint)
+  POST /search          → direct hybrid search (for debugging / exploration)
+  POST /index           → trigger re-ingestion from data/insurance_policies.txt
+  DELETE /index         → clear and reset the Endee index
 """
-
-import logging
 import time
-from contextlib import asynccontextmanager
-
-from fastapi import FastAPI, HTTPException
+from pathlib import Path
+from loguru import logger
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
-from app.rag_pipeline import RAGPipeline
-from app.schemas import QueryRequest, QueryResponse, IndexRequest, HealthResponse
 from app.config import settings
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger(__name__)
-
-rag: RAGPipeline = None
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global rag
-    logger.info("Initializing RAG pipeline with Endee vector DB...")
-    rag = RAGPipeline()
-    rag.initialize_index()
-    logger.info("RAG pipeline ready.")
-    yield
-    logger.info("Shutting down.")
-
-
-app = FastAPI(
-    title="Insurance Policy Q&A — Powered by Endee Vector DB",
-    description="RAG-based chatbot that answers insurance queries using semantic search over policy documents.",
-    version="1.0.0",
-    lifespan=lifespan,
+from app.schemas import (
+    ClaimRequest, ClaimVerdict,
+    SearchRequest, SearchResponse,
+    HealthResponse, IngestResponse,
 )
+from app.agent import InsuranceClaimsAgent
+from app.endee_store import EndeeHybridStore
+
+# ── Rate limiter ──────────────────────────────────────────────────────────────
+limiter = Limiter(key_func=get_remote_address)
+
+# ── App ───────────────────────────────────────────────────────────────────────
+app = FastAPI(
+    title="PolicyGuard AI",
+    description=(
+        "**Agentic Insurance Claims Analyzer** powered by Endee Hybrid Search.\n\n"
+        "Uses a 3-step reasoning pipeline (coverage → exclusions → procedure) "
+        "with Endee dense+BM25 hybrid vectors and Groq LLaMA3 synthesis.\n\n"
+        "No OpenAI required — fully free-tier compatible."
+    ),
+    version="2.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=["http://localhost:8501"],  # Streamlit only — not *
+    allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
 
+# ── Singletons (created once at startup) ─────────────────────────────────────
+store = EndeeHybridStore()
+agent = InsuranceClaimsAgent()
+
+
+# ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.get("/health", response_model=HealthResponse, tags=["System"])
 def health():
-    return HealthResponse(status="ok", version="1.0.0", vector_db="endee")
+    """Liveness check — returns server status and active index."""
+    return HealthResponse(
+        status="ok",
+        index=settings.INDEX_NAME,
+    )
 
 
-@app.post("/index", tags=["Indexing"])
-def index_documents(req: IndexRequest):
-    """Ingest and index insurance policy documents into Endee."""
+@app.post(
+    "/analyze",
+    response_model=ClaimVerdict,
+    tags=["Core"],
+    summary="Analyze an insurance claim (3-step agentic pipeline)",
+)
+@limiter.limit("20/minute")
+def analyze_claim(request: Request, body: ClaimRequest):
+    """
+    Submit a natural-language claim description.
+
+    The agent will:
+    1. Search Endee for relevant coverage terms
+    2. Search Endee for exclusions and waiting periods
+    3. Search Endee for the claim filing procedure
+
+    Then synthesise a structured verdict: COVERED / NOT_COVERED / PARTIAL.
+    """
     try:
-        count = rag.index_documents(req.documents)
-        return {"message": f"Successfully indexed {count} chunks into Endee.", "chunks": count}
+        return agent.analyze_claim(body.claim)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
-        logger.error(f"Indexing failed: {e}")
+        logger.error(f"/analyze error: {e}")
+        raise HTTPException(status_code=500, detail="Internal error — check server logs")
+
+
+@app.post(
+    "/search",
+    response_model=SearchResponse,
+    tags=["Exploration"],
+    summary="Direct hybrid search on policy documents",
+)
+@limiter.limit("30/minute")
+def search(request: Request, body: SearchRequest):
+    """
+    Run a direct hybrid search against Endee. Useful for exploring the index
+    or debugging retrieval quality before running the full agent.
+    """
+    try:
+        results = store.hybrid_search(body.query, body.top_k, body.section)
+        return SearchResponse(results=results, count=len(results), query=body.query)
+    except Exception as e:
+        logger.error(f"/search error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/query", response_model=QueryResponse, tags=["RAG"])
-def query(req: QueryRequest):
-    """Ask a question. Returns answer + retrieved context chunks."""
-    start = time.time()
+@app.post("/index", response_model=IngestResponse, tags=["Admin"])
+def trigger_ingest():
+    """
+    Re-run ingestion from data/insurance_policies.txt.
+    This endpoint is idempotent — safe to call multiple times.
+    """
+    from scripts.ingest import run_ingest
     try:
-        result = rag.answer(req.question, top_k=req.top_k)
-        result["latency_ms"] = round((time.time() - start) * 1000, 2)
-        return result
+        n = run_ingest()
+        return IngestResponse(message="Ingestion complete", chunks_indexed=n)
     except Exception as e:
-        logger.error(f"Query failed: {e}")
+        logger.error(f"/index error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.delete("/index", tags=["Indexing"])
-def clear_index():
-    """Clear all vectors from Endee index (use with caution)."""
+@app.delete("/index", tags=["Admin"])
+def reset_index():
+    """Drop and recreate the Endee hybrid index (all vectors deleted)."""
     try:
-        rag.clear_index()
-        return {"message": "Index cleared successfully."}
+        store.create_index()
+        return {"message": "Index reset", "index": settings.INDEX_NAME}
     except Exception as e:
+        logger.error(f"DELETE /index error: {e}")
         raise HTTPException(status_code=500, detail=str(e))

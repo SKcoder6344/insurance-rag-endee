@@ -1,170 +1,216 @@
-# Insurance Policy Q&A — RAG System Powered by Endee Vector Database
+# 🛡️ PolicyGuard AI — Agentic Insurance Claims Analyzer
 
-> Retrieval-Augmented Generation (RAG) chatbot that answers insurance queries using semantic search over policy documents — built on top of the **Endee high-performance vector database**.
+> **Multi-step agentic RAG system** that reasons through insurance claims in 3 targeted retrieval steps using **Endee Hybrid Vector Search (Dense + BM25)** and **Groq LLaMA3**. Returns structured verdicts: `COVERED` | `NOT_COVERED` | `PARTIAL`.
 
-![CI](https://github.com/SKcoder6344/insurance-rag-endee/actions/workflows/ci.yml/badge.svg)
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Endee](https://img.shields.io/badge/VectorDB-Endee-orange)
-![FastAPI](https://img.shields.io/badge/API-FastAPI-green)
+[![CI](https://github.com/SKcoder6344/insurance-rag-endee/actions/workflows/ci.yml/badge.svg)](https://github.com/SKcoder6344/insurance-rag-endee/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.11-blue)](https://python.org)
+[![Endee](https://img.shields.io/badge/VectorDB-Endee_Hybrid-orange)](https://endee.io)
+[![Groq](https://img.shields.io/badge/LLM-Groq_LLaMA3-purple)](https://console.groq.com)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-green)](https://fastapi.tiangolo.com)
+[![Streamlit](https://img.shields.io/badge/UI-Streamlit-red)](https://streamlit.io)
 
 ---
 
-## What It Does
+## 🔍 What it does
 
-Insurance policy documents are dense, jargon-heavy, and hard to navigate. This system ingests raw policy documents, chunks them into semantically meaningful passages, indexes them into **Endee** (a high-performance open-source vector database), and answers natural language queries using OpenAI GPT — returning both the answer and the exact source passages retrieved.
+Insurance claims are complex — a single claim touches **coverage terms**, **exclusion clauses**, **waiting periods**, and **filing procedures** simultaneously. A basic RAG query retrieves random policy text and misses this nuance.
+
+**PolicyGuard AI uses an agentic 3-step pipeline** — each step fires a targeted hybrid search against Endee, then Groq LLaMA3 synthesises all three retrieved contexts into a structured, explainable verdict.
 
 **Example:**
-> Q: *"Is pre-existing diabetes covered?"*
-> A: *"Pre-existing diseases including diabetes are covered after a 4-year waiting period from the policy inception date..."* `[Source: document_1 | Similarity: 0.94]`
+
+> **Claim:** *"My father has Type 2 diabetes and needs a kidney transplant. Is it covered?"*
+>
+> **Agent Step 1** → searches `coverage benefits organ transplant diabetes`
+> **Agent Step 2** → searches `exclusions waiting period pre-existing diabetes`
+> **Agent Step 3** → searches `claim procedure documents transplant network hospital`
+>
+> **Verdict:** `PARTIAL` — Kidney transplant is covered, but pre-existing diabetes triggers a **4-year waiting period**. If policy is > 4 years old, full coverage applies. Donor expenses covered up to 50% of sum insured.
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
-User Query
-    │
-    ▼
-[FastAPI /query endpoint]
-    │
-    ▼
-[OpenAI text-embedding-3-small]  ←── Embed the question
-    │
-    ▼
-[Endee Vector DB]  ←── Semantic search (cosine similarity, top-k)
-    │
-    ▼
-[Retrieved Policy Chunks]
-    │
-    ▼
-[OpenAI GPT-3.5-turbo]  ←── Generate grounded answer
-    │
-    ▼
-[Response: answer + sources + latency]
+User Claim (Streamlit UI)
+        │
+        ▼
+┌─────────────────────────────────────────────────────────┐
+│               InsuranceClaimsAgent                      │
+│                                                         │
+│  Step 1: hybrid_search("coverage benefits [claim]")     │
+│       │                                                 │
+│       ▼                                                 │
+│  Step 2: hybrid_search("exclusions waiting period")     │
+│       │                                                 │
+│       ▼                                                 │
+│  Step 3: hybrid_search("claim procedure documents")     │
+│       │                                                 │
+│       ▼                                                 │
+│  Groq LLaMA3-70B  ──►  Structured JSON Verdict         │
+└─────────────────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────────────────┐
+│           Endee Hybrid Search (per step)                │
+│                                                         │
+│  Dense Query (all-MiniLM-L6-v2, 384-dim)               │
+│       +                                                 │
+│  Sparse Query (Endee BM25 — keyword weights)           │
+│       │                                                 │
+│  HNSW Approximate Nearest Neighbor Search               │
+│  cosine similarity | INT8 precision                     │
+│       │                                                 │
+│  → Top-K policy chunks with similarity scores          │
+└─────────────────────────────────────────────────────────┘
 ```
+
+### Why Hybrid Search?
+
+| Search Type | Finds |
+|---|---|
+| Dense only | *"renal failure requiring dialysis"* matches *"kidney transplant"* (semantics) |
+| BM25 only | Exact terms — *"waiting period"*, *"4 years"*, *"pre-existing"* |
+| **Hybrid (Endee)** | **Both** — best recall + best precision |
+
+Endee's `endee_bm25` sparse model combined with sentence-transformer dense vectors means the agent retrieves the right clause even when user phrasing differs from policy language.
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology | Reason |
+| Layer | Technology | Why |
 |---|---|---|
-| Vector Database | **Endee** | High-performance, open-source, 1B vector support |
-| Embeddings | OpenAI `text-embedding-3-small` | 1536-dim, fast, high-quality |
-| LLM | OpenAI `gpt-3.5-turbo` | Accurate, grounded responses |
-| API | FastAPI | Async, auto-swagger, production-ready |
-| Containerization | Docker + Docker Compose | One-command deployment |
-| Testing | Pytest | 5 unit tests with mocked dependencies |
+| Vector DB | **Endee** (Hybrid: Dense + BM25) | Native hybrid search, HNSW, INT8, Docker-ready |
+| Dense Embeddings | `all-MiniLM-L6-v2` | 384-dim, free, runs locally, high semantic quality |
+| Sparse Embeddings | `endee-model / endee_bm25` | Endee-native BM25 — asymmetric doc/query weighting |
+| LLM (Synthesis) | **Groq LLaMA3-70B** | Free tier, 500ms latency, excellent instruction following |
+| API | FastAPI + SlowAPI | Async, rate limiting, Swagger/ReDoc auto-docs |
+| UI | Streamlit | Interactive chat, agent step trace, live similarity scores |
+| Testing | Pytest | 5 unit tests, fully mocked — no live services needed |
 | CI/CD | GitHub Actions | Auto-test on every push |
+| Containerisation | Docker + Compose | One-command startup: Endee + API + Streamlit |
+
+**No OpenAI. No paid APIs.** Fully free-tier compatible.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 - Docker & Docker Compose
-- OpenAI API Key
+- [Groq API Key](https://console.groq.com) (free, no credit card)
 
 ### 1. Clone and configure
+
 ```bash
 git clone https://github.com/SKcoder6344/insurance-rag-endee
 cd insurance-rag-endee
 cp .env.example .env
-# Add your OPENAI_API_KEY to .env
+# Add your GROQ_API_KEY to .env
 ```
 
-### 2. Start Endee vector DB + API
+### 2. Start all services
+
 ```bash
 docker compose up -d
 ```
 
-### 3. Index the sample insurance documents
+This starts:
+- **Endee** vector DB at `localhost:8080`
+- **FastAPI** backend at `localhost:8000`
+- **Streamlit** UI at `localhost:8501`
+
+### 3. Index policy documents into Endee
+
 ```bash
-python scripts/ingest.py
+curl -X POST http://localhost:8000/index
 ```
 
-### 4. Query via API (Swagger UI)
-Open **http://localhost:8000/docs** and try the `/query` endpoint.
+This chunks `data/insurance_policies.txt` by section, generates hybrid embeddings (dense + BM25), and upserts all vectors into Endee.
 
-Or via curl:
+### 4. Open the UI
+
+Visit **http://localhost:8501** and submit a claim.
+
+### 5. Or use the API directly
+
 ```bash
-curl -X POST http://localhost:8000/query \
+curl -X POST http://localhost:8000/analyze \
   -H "Content-Type: application/json" \
-  -d '{"question": "What does health insurance cover?", "top_k": 3}'
+  -d '{"claim": "I need knee replacement surgery. My policy is 3 years old."}'
 ```
 
 ---
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health check |
-| `POST` | `/index` | Ingest policy documents into Endee |
-| `POST` | `/query` | Ask a question (RAG pipeline) |
-| `DELETE` | `/index` | Clear all vectors |
-
-Full interactive docs: **http://localhost:8000/docs**
-
----
-
-## Project Structure
+## 📁 Folder Structure
 
 ```
 insurance-rag-endee/
 ├── app/
-│   ├── main.py           # FastAPI app + endpoints
-│   ├── rag_pipeline.py   # Core RAG: chunk → embed → retrieve → generate
-│   ├── endee_store.py    # Endee vector DB wrapper
+│   ├── main.py           # FastAPI app + endpoints + rate limiting
+│   ├── agent.py          # 3-step InsuranceClaimsAgent
+│   ├── endee_store.py    # Endee hybrid search wrapper
+│   ├── embedder.py       # HybridEmbedder (dense + BM25)
 │   ├── schemas.py        # Pydantic request/response models
-│   └── config.py         # Settings from .env
+│   └── config.py         # Settings from .env (pydantic-settings)
 ├── data/
-│   └── insurance_policies.txt   # Sample health + motor policy documents
+│   └── insurance_policies.txt   # Sectioned policy corpus
 ├── scripts/
-│   └── ingest.py         # CLI to index documents
+│   └── ingest.py         # Parse → embed → upsert to Endee
 ├── tests/
-│   └── test_pipeline.py  # 5 unit tests (mocked Endee + OpenAI)
+│   └── test_pipeline.py  # 5 unit tests (fully mocked)
+├── streamlit_app.py      # Chat UI with agent step trace
 ├── .github/workflows/
 │   └── ci.yml            # GitHub Actions CI
-├── docker-compose.yml    # Endee server + API
+├── docker-compose.yml    # Endee + API + Streamlit
 ├── Dockerfile
-├── requirements.txt
+├── requirements.txt      # Pinned deps
 └── .env.example
 ```
 
 ---
 
-## Performance
+## 📈 Key Metrics
 
 | Metric | Value |
 |---|---|
-| Embedding Model | `text-embedding-3-small` (1536 dims) |
-| Vector Similarity | Cosine (INT8 precision) |
-| Avg Query Latency | ~800ms (embedding + retrieval + generation) |
-| Documents Indexed | Health + Motor policy (8+ sections, 30+ chunks) |
-| Top-k Retrieval | Configurable (default: 3) |
+| Search type | Hybrid (Dense HNSW + BM25 sparse) |
+| Dense model | `all-MiniLM-L6-v2` (384 dimensions) |
+| Vector similarity | Cosine, INT8 precision |
+| LLM | Groq LLaMA3-70B |
+| Agent steps | 3 targeted retrievals per claim |
+| Policy corpus | 8 sections, 30+ chunks |
+| API rate limit | 20 req/min (configurable) |
+| Avg total latency | ~1.5–3s (retrieval + LLM) |
 
 ---
 
-## Running Tests
+## 🧪 Running Tests
 
 ```bash
 pytest tests/ -v
 ```
 
----
-
-## Built With Endee
-
-This project uses [Endee](https://endee.io) — an open-source, high-performance vector database capable of handling up to 1 billion vectors on a single node. Endee was selected for its:
-- Native Python SDK
-- Cosine similarity with INT8 precision
-- Docker-first deployment
-- Significantly lower memory footprint vs. alternatives like Pinecone or Weaviate
+All tests run without live Endee or Groq — fully mocked.
 
 ---
 
-## Author
+## 🔮 What makes this different
+
+| Feature | Basic RAG (competitors) | PolicyGuard AI |
+|---|---|---|
+| Search | Single dense query | 3-step targeted hybrid search |
+| Vector type | Dense only | **Dense + BM25 (Endee native)** |
+| LLM call | One generic prompt | Structured synthesis from 3 contexts |
+| Output | Plain text answer | Typed JSON: verdict, confidence, steps |
+| UI | None / basic | Chat UI with retrieval trace |
+| Infrastructure | Script-only | Docker + FastAPI + Streamlit + CI/CD |
+| Free-tier | ❌ Needs OpenAI | ✅ Groq + SentenceTransformers |
+
+---
+
+## 📬 Author
 
 **Sujal Kumar Nayak**
 - GitHub: [@SKcoder6344](https://github.com/SKcoder6344)

@@ -1,71 +1,128 @@
-Health Insurance Policy - Sample Coverage Document
+===SECTION: coverage===
+Our comprehensive health insurance plan covers in-patient hospitalisation for any illness or injury requiring more than 24 hours of hospital stay. All room rent, nursing charges, ICU charges, surgeon fees, anaesthesia, OT charges, and medicines consumed during hospitalisation are fully reimbursed up to the sum insured.
 
-Section 1: Hospitalization Benefits
-The insured is entitled to coverage for hospitalization expenses up to Rs. 5,00,000 per policy year. 
-This includes room rent up to Rs. 5,000 per day, ICU charges up to Rs. 10,000 per day, and surgeon fees. 
-Pre-hospitalization expenses are covered for 30 days prior to admission, and post-hospitalization 
-expenses are covered for 60 days after discharge.
+===SECTION: coverage===
+Day care procedures that do not require 24-hour hospitalisation are covered under this policy. This includes cataract surgery, chemotherapy, dialysis, radiotherapy, lithotripsy, and over 150 other listed day care treatments. The full procedure cost including medicines, surgeon fees, and OT charges is covered.
 
-Section 2: Pre-Existing Diseases
-Pre-existing diseases are covered after a waiting period of 4 years from the policy inception date. 
-Conditions such as diabetes, hypertension, and asthma are treated as pre-existing if diagnosed 
-before purchasing the policy. The policyholder must disclose all pre-existing conditions at the time of application.
+===SECTION: coverage===
+Ambulance charges up to Rs. 2,000 per hospitalisation are covered for emergency transport to the nearest network hospital. Air ambulance coverage up to Rs. 2,50,000 is available for life-threatening emergencies requiring inter-city transport.
 
-Section 3: Exclusions
-The policy does not cover cosmetic surgeries, dental treatments (unless due to accident), 
-maternity expenses (covered under a separate add-on rider), injuries from self-harm, 
-treatment outside India, and experimental treatments not approved by medical authorities.
+===SECTION: coverage===
+Organ donor expenses including pre and post transplant hospitalisation of the donor are covered up to 50% of the sum insured. All medical expenses incurred by the donor for harvesting the organ are reimbursable.
 
-Section 4: Cashless Hospitalization
-Cashless treatment is available at 5,000+ network hospitals across India. To avail cashless benefits,
-the insured must inform the insurance company within 24 hours of emergency hospitalization, 
-or 48 hours before planned hospitalization. The Third Party Administrator (TPA) must approve the cashless request.
+===SECTION: coverage===
+Pre-hospitalisation expenses including doctor consultations, diagnostic tests, and medicines up to 30 days before admission are covered. Post-hospitalisation expenses including follow-up visits, medicines, and tests up to 60 days after discharge are also covered.
 
-Section 5: Claim Process
-For reimbursement claims, the insured must submit all original bills, discharge summary, 
-doctor prescriptions, and investigation reports within 30 days of discharge. 
-Claims are processed within 15 working days of receiving complete documentation. 
-Any disputes should be escalated to the grievance cell within 30 days of claim rejection.
+===SECTION: coverage===
+Mental health hospitalisation is covered on par with physical illness. Inpatient treatment for anxiety disorders, depression, schizophrenia, bipolar disorder, and substance use disorders requiring hospitalisation is fully covered up to the sum insured. This is mandated under the Mental Healthcare Act 2017.
 
-Section 6: Critical Illness Rider
-An optional Critical Illness rider covers 32 critical conditions including cancer, heart attack, 
-kidney failure, stroke, and organ transplants. The lump sum benefit of Rs. 10,00,000 is paid 
-on first diagnosis of any covered condition. There is a 90-day survival clause from the date of diagnosis.
+===SECTION: coverage===
+Critical illness cover includes heart attack, stroke, cancer (excluding skin cancer), kidney failure requiring dialysis, major organ transplant, paralysis, coronary artery bypass surgery, and multiple sclerosis. A lump sum equal to the critical illness sum insured is paid upon diagnosis.
 
-Section 7: No Claim Bonus
-For every claim-free year, the sum insured increases by 10% as No Claim Bonus (NCB), 
-up to a maximum of 50% of the original sum insured. If a claim is made, the NCB reduces 
-by 10% for each claim year but does not go below the original sum insured.
+===SECTION: coverage===
+Maternity benefits include normal delivery, Caesarean section, pre-natal and post-natal expenses. Coverage is available after a 9-month waiting period from policy inception. Newborn baby is covered from birth up to 90 days under the mother's policy. Vaccinations for the newborn during the first 90 days are also covered.
 
-Section 8: Premium and Renewal
-The premium is calculated based on age, sum insured, medical history, and add-on riders selected. 
-The policy must be renewed before the expiry date to maintain continuity benefits. 
-A grace period of 30 days is allowed for renewal. Lifelong renewability is guaranteed 
-irrespective of claims or health deterioration.
+===SECTION: coverage===
+Ayurvedic, Homeopathic, and Unani (AYUSH) treatment hospitalisation is covered up to Rs. 50,000 per year, provided the treatment is administered at a recognised AYUSH hospital and the patient is admitted for at least 24 hours.
 
----
+===SECTION: coverage===
+Home hospitalisation (domiciliary treatment) is covered when the patient's condition makes it medically unsafe to move them to a hospital. The attending doctor must certify the necessity in writing. Coverage is up to 15% of the sum insured per policy year.
 
-Motor Insurance Policy - Third Party and Comprehensive Coverage
+===SECTION: coverage===
+Cataract surgery is covered as a day care procedure under this policy. Both eyes can be operated during the same policy year. The total covered amount is Rs. 40,000 per eye or the actual charges, whichever is lower.
 
-Section 1: Third Party Liability
-Third party liability insurance is mandatory under the Motor Vehicles Act. It covers bodily injury, 
-death, or property damage caused to a third party due to an accident involving the insured vehicle. 
-There is no upper limit on third party bodily injury claims. Property damage to third party 
-is covered up to Rs. 7.5 lakh per accident.
+===SECTION: coverage===
+Knee replacement surgery (total or partial) is covered under this policy after the applicable waiting period. Both knees can be covered in the same hospitalisation. Physiotherapy expenses post-surgery for up to 6 months are also included under post-hospitalisation benefits.
 
-Section 2: Own Damage Coverage
-Comprehensive motor insurance covers own damage to the insured vehicle due to accidents, 
-theft, fire, natural calamities (flood, earthquake, cyclone), riots, and malicious acts. 
-The Insured Declared Value (IDV) represents the maximum amount payable in case of total loss or theft.
+===SECTION: coverage===
+Diabetes treatment including hospitalisation for diabetic complications such as diabetic foot, diabetic nephropathy, and diabetic retinopathy is covered after the pre-existing disease waiting period of 4 years. Insulin, oral hypoglycemics, and monitoring devices are not covered as outpatient expenses.
 
-Section 3: Add-On Covers
-Optional add-on covers include Zero Depreciation (full claim without depreciation deduction), 
-Engine Protection (covers hydrostatic lock and oil leakage), Return to Invoice (claim up to original 
-purchase price in case of total loss), Roadside Assistance (24x7 towing and emergency help), 
-and Personal Accident Cover for passengers.
+===SECTION: coverage===
+Cancer treatment including surgery, chemotherapy, radiation therapy, targeted therapy, and immunotherapy is covered up to the sum insured. Bone marrow transplant for blood cancers is covered. Experimental or clinical trial treatments are not covered.
 
-Section 4: Claim Intimation
-Any claim must be intimated to the insurer within 24 hours of the accident or incident. 
-For theft claims, an FIR must be filed immediately and submitted with the claim. 
-The vehicle should not be repaired before the survey, except for minor repairs to prevent 
-further damage, which must be pre-approved by the insurer.
+===SECTION: coverage===
+Emergency medical evacuation within India is covered up to Rs. 1,00,000 per incident. International emergency coverage is available as an optional add-on rider.
+
+===SECTION: exclusions===
+Cosmetic and aesthetic procedures including rhinoplasty, liposuction, breast augmentation or reduction, hair transplant, and Botox injections are not covered under this policy. Exceptions are made only when the procedure is medically necessary due to an accident or disease.
+
+===SECTION: exclusions===
+Dental treatment including tooth extraction, root canal, fillings, orthodontic procedures, and dental implants are excluded unless arising directly from an accidental injury. Dental injuries caused by eating, biting, or chewing are not considered accidental injuries.
+
+===SECTION: exclusions===
+Vision correction procedures including spectacles, contact lenses, LASIK surgery, and routine eye check-ups are not covered. However, eye surgery required due to disease or accidental injury to the eye is covered.
+
+===SECTION: exclusions===
+Self-inflicted injuries, suicide attempts, and injuries resulting from illegal activities are excluded from coverage. Treatment required as a result of war, nuclear weapons, or terrorism declared by government authorities is also excluded.
+
+===SECTION: exclusions===
+Treatment outside India is not covered under the standard policy. However, an international coverage rider is available separately that covers emergency hospitalisation abroad up to USD 50,000.
+
+===SECTION: exclusions===
+Fertility treatments including IVF, IUI, surrogacy, fertility medications, and sperm banking are excluded. Gender reassignment surgery and its complications are not covered.
+
+===SECTION: exclusions===
+Obesity treatment including bariatric surgery (unless BMI > 40 with documented co-morbidities) is not covered. Weight loss programs, gym memberships, and dietary supplements are excluded.
+
+===SECTION: exclusions===
+Experimental treatments, unproven therapies, and treatments not approved by the medical council are not covered. Stem cell therapy except for specific haematological conditions is excluded.
+
+===SECTION: exclusions===
+Outpatient consultation fees, general practitioner visits, diagnostic tests done without hospitalisation, and pharmacy bills for chronic medications are not covered under the base policy. An OPD add-on rider is available separately.
+
+===SECTION: exclusions===
+Pre-existing sexually transmitted diseases, HIV/AIDS treatment, and related complications are excluded. However, accidental needle-stick injuries resulting in HIV infection in healthcare workers are covered.
+
+===SECTION: exclusions===
+Injuries or illnesses arising from participation in adventure sports including mountaineering, skydiving, bungee jumping, motor racing, or deep-sea diving are not covered under the standard policy.
+
+===SECTION: waiting_period===
+A general waiting period of 30 days applies from the policy inception date. No claims are payable for illnesses first manifested during this 30-day period, except for accidental injuries which are covered from day one.
+
+===SECTION: waiting_period===
+Specific disease waiting period of 2 years applies to the following conditions: Cataracts, Hernia (all types), Hydrocele, Varicocele, Haemorrhoids (piles), Tonsillectomy, Adenoidectomy, Deviated Nasal Septum, Sinusitis, Benign Prostate Hypertrophy (BPH), Knee ligament and meniscus disorders, Varicose veins, Gallbladder stones, and Kidney stones.
+
+===SECTION: waiting_period===
+Pre-existing disease waiting period of 4 years applies to any condition, illness, or injury that was diagnosed, treated, or symptomatic before the policy inception date. After 4 continuous years of uninterrupted policy renewal, all pre-existing conditions become fully covered.
+
+===SECTION: waiting_period===
+Diabetes (Type 1 and Type 2), hypertension, thyroid disorders, and asthma are considered pre-existing diseases and are subject to the 4-year waiting period. Complications arising from these conditions such as diabetic nephropathy, hypertensive heart disease, or asthma-induced pneumonia are also not covered during the waiting period.
+
+===SECTION: waiting_period===
+Maternity coverage is available after 9 consecutive months of policy holding. The 9-month waiting period applies fresh each time a new policy is taken or allowed to lapse. Ectopic pregnancy is covered without any waiting period as it is a life-threatening emergency.
+
+===SECTION: waiting_period===
+Knee replacement surgery is subject to the 2-year specific disease waiting period if the condition exists before policy inception. If knee damage occurred due to an accident after policy commencement, the accidental surgery is covered immediately with no waiting period.
+
+===SECTION: waiting_period===
+Cardiac procedures including bypass surgery, valve replacement, and angioplasty are covered from day one for accidental causes. For disease-related cardiac procedures, the pre-existing disease waiting period of 4 years applies if the cardiac condition was known before policy commencement.
+
+===SECTION: claim_procedure===
+To file a cashless hospitalisation claim at a network hospital, follow these steps: (1) Show your PolicyGuard health card at the hospital's TPA desk at least 4 hours before planned admission, or immediately in an emergency. (2) The hospital will raise a pre-authorisation request to our TPA. (3) Our TPA will approve or respond within 4 hours for emergencies and within 2 hours for planned procedures. (4) On discharge, verify the final bill. The hospital will directly settle approved amounts with us.
+
+===SECTION: claim_procedure===
+Required documents for cashless hospitalisation: (1) PolicyGuard health card or policy number, (2) Photo ID proof (Aadhaar / PAN / Passport), (3) Doctor's referral letter or prescription advising hospitalisation, (4) Completed pre-authorisation form (available at hospital TPA desk). No deposit is required for approved cashless claims.
+
+===SECTION: claim_procedure===
+For reimbursement claims at non-network hospitals: Submit the claim within 30 days of discharge. Required documents: (1) Duly filled claim form (downloadable from our website or app), (2) Original discharge summary from the hospital, (3) All original bills, receipts, and payment proof, (4) All original diagnostic reports and prescriptions, (5) Doctor's certificate confirming the diagnosis and medical necessity, (6) NEFT details for direct bank transfer.
+
+===SECTION: claim_procedure===
+Emergency hospitalisation at non-network hospitals: In a genuine medical emergency, you may be admitted to any hospital. Notify our 24x7 helpline within 24 hours of admission. Submit the reimbursement claim with all original documents within 30 days of discharge. Emergency is defined as a life-threatening condition requiring immediate medical attention.
+
+===SECTION: claim_procedure===
+Claim settlement timeline: Pre-authorisation decisions are issued within 2 hours (planned procedures) or 4 hours (emergencies). Cashless settlements are processed directly with the network hospital. Reimbursement claims are processed within 30 working days of receiving complete documentation. Deficiency letters will be sent within 7 working days if documents are incomplete.
+
+===SECTION: claim_procedure===
+To find network hospitals: Use the PolicyGuard mobile app or website (policyguard.in/network-hospitals). Search by city, pincode, or hospital name. Over 10,000 network hospitals are listed across India. Network hospitals accept cashless treatment and have dedicated TPA desks.
+
+===SECTION: claim_procedure===
+Pre-authorisation for planned surgery: Contact our TPA helpline at 1800-XXX-XXXX at least 72 hours before the planned admission. Alternatively, the hospital's TPA desk can initiate the request. Submit doctor's recommendation, diagnostic reports confirming the diagnosis, and the estimated treatment cost. Our medical team will review and approve within 2 working hours.
+
+===SECTION: claim_procedure===
+Post-hospitalisation claim for follow-up expenses: Collect all bills, receipts, diagnostic reports, and prescription slips from follow-up visits within 60 days of discharge. Submit as a single reimbursement claim with the original discharge summary as a linking document. These are reimbursed along with the main hospitalisation claim or separately.
+
+===SECTION: emergency===
+Emergency ambulance services: Call 108 (national emergency number) or our 24x7 PolicyGuard Emergency Helpline at 1800-XXX-XXXX. Our team will guide you to the nearest network hospital and initiate pre-authorisation immediately. Ambulance costs are covered up to Rs. 2,000 per incident.
+
+===SECTION: emergency===
+24x7 helpline services include: Medical emergency guidance, nearest network hospital locator, pre-authorisation initiation, claim status updates, grievance registration, and cashless extension requests.

@@ -1,4 +1,6 @@
 services:
+
+  # ── Endee Vector Database ────────────────────────────────────────────────────
   endee:
     image: endeeio/endee-server:latest
     container_name: endee-server
@@ -8,24 +10,44 @@ services:
       nofile: 100000
     environment:
       NDD_NUM_THREADS: 0
-      NDD_AUTH_TOKEN: ""
+      NDD_AUTH_TOKEN: ""          # Leave empty for local dev — no auth
     volumes:
       - endee-data:/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/index/list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # ── FastAPI Backend ───────────────────────────────────────────────────────────
   api:
     build: .
-    container_name: insurance-rag-api
+    container_name: policyguard-api
     ports:
       - "8000:8000"
+    env_file: .env
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ENDEE_HOST=http://endee:8080
-    depends_on:
-      - endee
+      ENDEE_URL: http://endee:8080   # Internal Docker network address
     volumes:
-      - .:/app
+      - ./data:/app/data
+    depends_on:
+      endee:
+        condition: service_healthy
     restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── Streamlit UI ──────────────────────────────────────────────────────────────
+  ui:
+    build: .
+    container_name: policyguard-ui
+    ports:
+      - "8501:8501"
+    env_file: .env
+    depends_on:
+      - api
+    restart: unless-stopped
+    command: streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0
 
 volumes:
   endee-data:
